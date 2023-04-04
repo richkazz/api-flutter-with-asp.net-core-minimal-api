@@ -1,0 +1,6 @@
+{
+    "errors": [
+        "Passwords must have at least one non alphanumeric character.",
+        "Passwords must have at least one lowercase ('a'-'z')."
+    ]
+}

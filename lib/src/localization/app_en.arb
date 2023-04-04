@@ -1,0 +1,6 @@
+{
+  "appTitle": "api_tempate_flutter",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
