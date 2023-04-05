@@ -16,6 +16,7 @@ class Section1 extends StatelessWidget {
       context.read<AdminSettingsBloc>().add(ExamScoreTypeEvent(val!));
     }
 
+    context.read<AdminSettingsBloc>().add(GetActiveTermEvent());
     void onTermSelected(val) {
       selectedItem = val;
       context
@@ -41,9 +42,13 @@ class Section1 extends StatelessWidget {
                 BlocBuilder<AdminSettingsBloc, AdminSettingsState>(
                   buildWhen: (previous, current) {
                     return current is FirstTermState ||
-                        current is SecondTermState;
+                        current is SecondTermState ||
+                        current is ActiveSchoolTermState;
                   },
                   builder: (context, state) {
+                    if (state is ActiveSchoolTermState) {
+                      selectedItem = state.activeSchoolTerm.activeTerm;
+                    }
                     return Container(
                       width: double.maxFinite,
                       height: 40,

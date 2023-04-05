@@ -21,6 +21,11 @@ class SecondTermState extends AdminSettingsState {
   const SecondTermState(this.term);
 }
 
+class ActiveSchoolTermState extends AdminSettingsState {
+  final ActiveSchoolTermEntity activeSchoolTerm;
+  const ActiveSchoolTermState({required this.activeSchoolTerm});
+}
+
 class NavCloseState extends AdminSettingsState {}
 
 class NavOpenState extends AdminSettingsState {}

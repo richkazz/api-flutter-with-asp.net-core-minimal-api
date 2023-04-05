@@ -15,6 +15,8 @@ class FirstTermEvent extends AdminSettingsEvent {}
 
 class SecondEvent extends AdminSettingsEvent {}
 
+class GetActiveTermEvent extends AdminSettingsEvent {}
+
 class ChangeJuniorSeniorEvent extends AdminSettingsEvent {
   final bool isSenior;
 

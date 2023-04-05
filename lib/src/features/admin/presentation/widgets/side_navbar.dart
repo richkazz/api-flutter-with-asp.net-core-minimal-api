@@ -154,7 +154,7 @@ class _NavSideBarState extends State<NavSideBar>
               flex: (_rightAnimation.value * 100).round(),
               child: BlocBuilder<AdminBloc, AdminState>(
                 builder: (context, state) {
-                  return  const AdminSettings();
+                  return const AdminSettings();
                 },
               ),
             ),
