@@ -1,6 +1,36 @@
 import 'package:flutter/material.dart';
 
 class Notify {
+  static Future<dynamic> askConfirmationNotify(
+      BuildContext context, Function function) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm your choice'),
+          content:
+              const Text('Are you sure you want to proceed with this action?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                    context, false); // Return false to indicate cancel
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+                function(); // Return true to indicate confirmation
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   static Widget success1(
       BuildContext context, String message, Function function) {
     return GestureDetector(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../../app_bloc/bloc/app_bloc.dart';
 import '../bloc/admin_settings_bloc.dart';
 
 class Section1 extends StatelessWidget {
@@ -73,7 +74,10 @@ class Section1 extends StatelessWidget {
                             ),
                           ],
                           onChanged: (value) {
-                            onTermSelected(value!);
+                            void doSomething() => onTermSelected(value!);
+                            context
+                                .read<AppBloc>()
+                                .add(NotifyConfirmationEvent(doSomething));
                           },
                         ),
                       ),

@@ -1,8 +1,11 @@
 import 'package:api_tempate_flutter/src/features/login/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../widgets/notify_indicator.dart';
+import 'app_bloc/bloc/app_bloc.dart';
 import 'features/admin/presentation/pages/admin_page.dart';
 import 'features/sign_up/presentation/pages/signup_page.dart';
 import 'sample_feature/sample_item_details_view.dart';
@@ -69,26 +72,45 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
-                switch (routeSettings.name) {
-                  case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
-                  case SampleItemDetailsView.routeName:
-                    return const SampleItemDetailsView();
-                  case LoginPage.routeName:
-                    return const LoginPage();
-                  case AdminPage.routeName:
-                    return const AdminPage();
-                  case SignUpPage.routeName:
-                    return const SignUpPage();
-                  case SampleItemListView.routeName:
-                  default:
-                    return const AdminPage();
-                }
+                return BlocProvider(
+                    create: (context) => AppBloc(),
+                    child: BlocListener<AppBloc, AppState>(
+                      listenWhen: (previous, current) =>
+                          (current is! AppInitial),
+                      listener: (context, state) async {
+                        if (state is NotifyConfirmationState) {
+                          await Notify.askConfirmationNotify(
+                              context, state.function);
+                        }
+                        context.read<AppBloc>().add(const InitialAppEvent());
+                      },
+                      child: CurrentAppSwitch(
+                          routeSettings.name, settingsController),
+                    ));
               },
             );
           },
         );
       },
     );
+  }
+}
+
+Widget CurrentAppSwitch(
+    String? routeSettingsName, SettingsController settingsController) {
+  switch (routeSettingsName) {
+    case SettingsView.routeName:
+      return SettingsView(controller: settingsController);
+    case SampleItemDetailsView.routeName:
+      return const SampleItemDetailsView();
+    case LoginPage.routeName:
+      return const LoginPage();
+    case AdminPage.routeName:
+      return const AdminPage();
+    case SignUpPage.routeName:
+      return const SignUpPage();
+    case SampleItemListView.routeName:
+    default:
+      return const AdminPage();
   }
 }
