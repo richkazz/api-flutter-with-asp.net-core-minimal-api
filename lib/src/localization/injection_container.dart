@@ -7,6 +7,8 @@ import 'package:api_tempate_flutter/src/features/login/login_injection_container
     as login;
 import 'package:api_tempate_flutter/src/features/sign_up/signup_injection_container.dart'
     as signup;
+import 'package:api_tempate_flutter/src/features/admin/admin_injection_container.dart'
+    as admin;
 
 import '../../core/Api/api.dart';
 
@@ -15,7 +17,7 @@ final sl = GetIt.instance;
 void init() {
   login.init();
   signup.init();
-
+  admin.init();
   sl.registerLazySingleton(() => http.Client());
   sl.registerLazySingleton(
       () => Dio(BaseOptions(baseUrl: Api.apiLink, headers: Api.headers)));

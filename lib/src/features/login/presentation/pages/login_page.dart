@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../widgets/widgets.dart';
+import '../../../admin/presentation/pages/admin_page.dart';
 import '../../login_injection_container.dart';
 import '../bloc/login_bloc.dart';
 import '../widgets/login_control.dart';
@@ -48,7 +49,13 @@ class LoginPage extends StatelessWidget {
                 } else if (state is Loading) {
                   return Notify.loading1(context);
                 } else if (state is Loaded) {
-                  void successFunction() {}
+                  void successFunction() {
+                    Navigator.restorablePushNamed(
+                      context,
+                      AdminPage.routeName,
+                    );
+                  }
+
                   return Notify.success1(
                       context, state.message, successFunction);
                 } else if (state is Error) {

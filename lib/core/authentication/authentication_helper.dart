@@ -26,6 +26,9 @@ class AuthenticationHelperService implements AuthenticationHelperInterface {
     final response = await dioClient.post('/auth/login', data: body);
     if (response.statusCode == 200) {
       Api.token = response.data;
+      Api.addTokenToHeader();
+      dioClient.options =
+          BaseOptions(baseUrl: Api.apiLink, headers: Api.headers);
       return AuthStatus.successful;
     } else {
       throw ServerException();
