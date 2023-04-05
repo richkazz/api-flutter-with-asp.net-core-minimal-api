@@ -13,11 +13,12 @@ void init() {
     () => AdminBloc(),
   );
   sl.registerFactory(
-    () => AdminSettingsBloc(getActibeTerm: sl()),
+    () => AdminSettingsBloc(getActibeTerm: sl(), updateActibeTerm: sl()),
   );
 
   // Use cases
   sl.registerLazySingleton(() => GetActiveTerm(sl()));
+  sl.registerLazySingleton(() => UpdateActiveTerm(sl()));
 
 // Repository
   sl.registerLazySingleton<AdminSettingsRepositories>(

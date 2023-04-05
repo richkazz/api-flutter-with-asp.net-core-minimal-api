@@ -1,18 +1,21 @@
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/domain/usecases/admin_settings_get_active_term.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../domain/entities/active_school_term_entity.dart';
+import '../../admin_settings.dart';
 
 part 'admin_settings_event.dart';
 part 'admin_settings_state.dart';
 
 class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
   final GetActiveTerm _getActibeTerm;
-  AdminSettingsBloc({required GetActiveTerm getActibeTerm})
+  final UpdateActiveTerm _updateActibeTerm;
+  AdminSettingsBloc(
+      {required GetActiveTerm getActibeTerm,
+      required UpdateActiveTerm updateActibeTerm})
       : _getActibeTerm = getActibeTerm,
+        _updateActibeTerm = updateActibeTerm,
         super(AdminSettingsInitial()) {
     on<AdminSettingsEvent>((event, emit) {
       // TODO: implement event handler
@@ -27,16 +30,8 @@ class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
         emit(AdminSettingsInitial());
       },
     );
-    on<FirstTermEvent>(
-      (event, emit) {
-        emit(const FirstTermState(1));
-      },
-    );
-    on<SecondEvent>(
-      (event, emit) {
-        emit(const SecondTermState(2));
-      },
-    );
+    on<FirstTermEvent>(_handelFirstTermEvent);
+    on<SecondEvent>(_handelSecondTermEvent);
 
     on<ChangeJuniorSeniorEvent>(
       (event, emit) {
@@ -56,14 +51,45 @@ class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
       },
     );
   }
+  ActiveSchoolTermEntity? activeSchoolTermEntity;
   void _handelGetActiveTermEvent(
       GetActiveTermEvent event, Emitter<AdminSettingsState> emit) async {
     try {
       var activeSchoolTerm = await _getActibeTerm.call();
-      emit(ActiveSchoolTermState(
-          activeSchoolTerm: ActiveSchoolTermEntity(
-              activeTerm: activeSchoolTerm.activeTerm,
-              id: activeSchoolTerm.id)));
+      var act = ActiveSchoolTermEntity(
+          activeTerm: activeSchoolTerm.activeTerm, id: activeSchoolTerm.id);
+      activeSchoolTermEntity = act;
+      emit(ActiveSchoolTermState(activeSchoolTerm: act));
+    } on DioError catch (e) {
+      if (kDebugMode) {
+        print(e.message);
+      }
+    }
+  }
+
+  void _handelFirstTermEvent(
+      FirstTermEvent event, Emitter<AdminSettingsState> emit) async {
+    try {
+      if (activeSchoolTermEntity == null) return;
+
+      await _updateActibeTerm(
+          ActiveSchoolTerm(id: activeSchoolTermEntity!.id, activeTerm: 1));
+      emit(const FirstTermState(1));
+    } on DioError catch (e) {
+      if (kDebugMode) {
+        print(e.message);
+      }
+    }
+  }
+
+  void _handelSecondTermEvent(
+      SecondEvent event, Emitter<AdminSettingsState> emit) async {
+    try {
+      if (activeSchoolTermEntity == null) return;
+
+      await _updateActibeTerm(
+          ActiveSchoolTerm(id: activeSchoolTermEntity!.id, activeTerm: 2));
+      emit(const SecondTermState(2));
     } on DioError catch (e) {
       if (kDebugMode) {
         print(e.message);

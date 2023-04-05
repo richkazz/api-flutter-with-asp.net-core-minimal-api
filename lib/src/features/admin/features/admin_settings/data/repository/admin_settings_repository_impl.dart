@@ -12,4 +12,9 @@ class AdminSettingsRepositoryImpl implements AdminSettingsRepositories {
   Future<ActiveSchoolTerm> getActiveTerm() async {
     return await remoteDataSource.getActiveTerm();
   }
+
+  @override
+  Future updateActiveTerm(ActiveSchoolTerm activeSchoolTerm) async {
+    return await remoteDataSource.updateActiveTerm(activeSchoolTerm);
+  }
 }

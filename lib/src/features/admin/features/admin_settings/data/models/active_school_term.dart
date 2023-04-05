@@ -14,7 +14,7 @@ class ActiveSchoolTerm {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['ictiveTerm'] = activeTerm;
+    data['activeTerm'] = activeTerm;
     return data;
   }
 }
