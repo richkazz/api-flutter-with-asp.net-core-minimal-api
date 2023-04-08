@@ -1,5 +1,4 @@
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/admin_settings.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/active_school_term.dart';
+import '../../admin_settings.dart';
 
 class UpdateActiveTerm {
   final AdminSettingsRepositories repository;

@@ -35,4 +35,14 @@ class Constants {
     'SSS-2',
     'SSS-3'
   ];
+
+  static const List<String> alphabets = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+  ];
 }

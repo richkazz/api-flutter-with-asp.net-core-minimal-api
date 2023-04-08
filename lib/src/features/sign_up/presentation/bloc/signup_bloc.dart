@@ -1,7 +1,9 @@
 import 'package:api_tempate_flutter/core/authentication/Authentication.dart';
+import 'package:api_tempate_flutter/core/error/error.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import '../../domain/entities/sign_up.dart';
 import '../../domain/usecases/post_sign_up_data.dart';
@@ -42,8 +44,11 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       }
     } on DioError catch (e) {
       var error = e.response!.data as Map<String, dynamic>;
-      var message = SignupErrorModel.fromJson(error);
-      emit(Error(message: message.errors.toString()));
+      var message = ErrorResponse.fromJson(error);
+      if (kDebugMode) {
+        print(message);
+      }
+      emit(Error(message: message.errors.join(",")));
     } on Exception catch (e) {
       emit(Error(message: "Something went wrong"));
     }

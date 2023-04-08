@@ -1,3 +1,4 @@
+import 'package:api_tempate_flutter/core/constants/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,108 +10,34 @@ class Section2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int classSelectType = 1;
-    List<bool> selectedClass = List<bool>.filled(40, false);
-    List<Widget> generateCheckBox(BuildContext ctx) {
-      List<Widget> item = [];
+    const int classSelectType = 1;
+    final Layout layout = Layout(context: context);
+    final List<bool> selectedClass = List.filled(40, false);
+    Set<String> schoolClasses = {};
 
-      item.add(Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: const [
-          SizedBox(width: 50, child: Text('Class')),
-          SizedBox(width: 30, child: Center(child: Text('A'))),
-          SizedBox(width: 30, child: Center(child: Text('B'))),
-          SizedBox(width: 30, child: Center(child: Text('C'))),
-          SizedBox(width: 30, child: Center(child: Text('D'))),
-          SizedBox(width: 30, child: Center(child: Text('E'))),
-          SizedBox(width: 30, child: Center(child: Text('F'))),
-        ],
-      ));
-      int classIndex = 0;
-      for (var i = 0; i <= 30; i += 6) {
-        item.add(Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(width: 50, child: Text(Constants.classes[classIndex++])),
-            Checkbox(
-              shape: const CircleBorder(),
-              value: selectedClass[i],
-              onChanged: (value) {
-                selectedClass[i] = value!;
-                ctx.read<ClassSelectorBloc>().add(SelectedClassEvent(i));
-              },
-            ),
-            Checkbox(
-              shape: const CircleBorder(),
-              value: selectedClass[i + 1],
-              onChanged: (value) {
-                selectedClass[i + 1] = value!;
-                ctx.read<ClassSelectorBloc>().add(SelectedClassEvent(i + 1));
-              },
-            ),
-            Checkbox(
-              shape: const CircleBorder(),
-              value: selectedClass[i + 2],
-              onChanged: (value) {
-                selectedClass[i + 2] = value!;
-                ctx.read<ClassSelectorBloc>().add(SelectedClassEvent(i + 2));
-              },
-            ),
-            Checkbox(
-              shape: const CircleBorder(),
-              value: selectedClass[i + 3],
-              onChanged: (value) {
-                selectedClass[i + 3] = value!;
-                ctx.read<ClassSelectorBloc>().add(SelectedClassEvent(i + 3));
-              },
-            ),
-            Checkbox(
-              shape: const CircleBorder(),
-              value: selectedClass[i + 4],
-              onChanged: (value) {
-                selectedClass[i + 4] = value!;
-                ctx.read<ClassSelectorBloc>().add(SelectedClassEvent(i + 4));
-              },
-            ),
-            Checkbox(
-              shape: const CircleBorder(),
-              value: selectedClass[i + 5],
-              onChanged: (value) {
-                selectedClass[i + 5] = value!;
-                ctx.read<ClassSelectorBloc>().add(SelectedClassEvent(i + 5));
-              },
-            ),
-          ],
-        ));
-      }
-      return item;
-    }
-
-    var size = MediaQuery.of(context).size;
-    List<Widget> children2 = [
-      size.width > 700
-          ? Expanded(
-              child:
-                  ClassSettings(size: size, classSelectType: classSelectType),
-            )
-          : ClassSettings(size: size, classSelectType: classSelectType),
+    final children2 = [
+      if (layout.isLargeScreen)
+        const Expanded(
+          child: ClassSettings(classSelectType: classSelectType),
+        )
+      else
+        const ClassSettings(classSelectType: classSelectType),
       const SizedBox(
         height: 10,
         width: 10,
       ),
-      MultipleClassSelection(
-        generateCheckBox: generateCheckBox,
-      )
+      MultipleClassSelection(generateCheckBox: () {}),
     ];
+
     return Padding(
       padding: const EdgeInsets.all(0.0),
-      child: size.width > 700
+      child: layout.isLargeScreen
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: children2,
             )
           : SizedBox(
-              height: 600,
+              height: 400,
               child: Column(
                 children: children2,
               ),
@@ -128,6 +55,8 @@ class MultipleClassSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<bool> selectedClass = List.filled(40, false);
+    Set<String> schoolClasses = {};
     return Expanded(
       child: Container(
         color: Colors.white,
@@ -144,39 +73,128 @@ class MultipleClassSelection extends StatelessWidget {
               const SizedBox(
                 height: 5,
               ),
-              BlocProvider(
-                create: (context) => ClassSelectorBloc(),
-                child: BlocBuilder<ClassSelectorBloc, int>(
-                  builder: (context, state) {
-                    return Column(
-                      children: generateCheckBox(context),
-                    );
-                  },
-                ),
-              )
+              BlocBuilder<AdminSettingsBloc, AdminSettingsState>(
+                buildWhen: (previous, current) {
+                  if (current is SchoolClasseSetState) {
+                    schoolClasses = current.schoolClasses;
+                  }
+                  return current is SchoolClasseSetState;
+                },
+                builder: (context, state) {
+                  return BlocProvider(
+                      create: (context) => ClassSelectorBloc(),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: const [
+                              SizedBox(width: 50, child: Text('Class')),
+                              SizedBox(
+                                  width: 30, child: Center(child: Text('A'))),
+                              SizedBox(
+                                  width: 30, child: Center(child: Text('B'))),
+                              SizedBox(
+                                  width: 30, child: Center(child: Text('C'))),
+                              SizedBox(
+                                  width: 30, child: Center(child: Text('D'))),
+                              SizedBox(
+                                  width: 30, child: Center(child: Text('E'))),
+                              SizedBox(
+                                  width: 30, child: Center(child: Text('F'))),
+                            ],
+                          ),
+                          ...List.generate(6, (index) {
+                            final startIndex = index * 6;
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(
+                                  width: 50,
+                                  child:
+                                      Text(Constants.classes[startIndex ~/ 6]),
+                                ),
+                                ...List.generate(6, (subIndex) {
+                                  final checkboxIndex = startIndex + subIndex;
+                                  makeClassSelected(schoolClasses, startIndex,
+                                      subIndex, selectedClass, checkboxIndex);
+                                  return BlocBuilder<ClassSelectorBloc, int>(
+                                    buildWhen: (previous, current) =>
+                                        current == checkboxIndex ||
+                                        (previous == checkboxIndex &&
+                                            current == -1),
+                                    builder: (context, state) {
+                                      return Checkbox(
+                                        shape: const CircleBorder(),
+                                        value: selectedClass[checkboxIndex],
+                                        onChanged: (value) {
+                                          _addOrRemoveAClasssFromTheSet(
+                                              value,
+                                              schoolClasses,
+                                              startIndex,
+                                              subIndex);
+                                          onCheckAClass(selectedClass,
+                                              checkboxIndex, value, context);
+                                        },
+                                      );
+                                    },
+                                  );
+                                }),
+                              ],
+                            );
+                          }),
+                        ],
+                      ));
+                },
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  void _addOrRemoveAClasssFromTheSet(
+      bool? value, Set<String> schoolClasses, int startIndex, int subIndex) {
+    final classString = getClassAsString(startIndex, subIndex);
+    if (value == true) {
+      schoolClasses.add(classString);
+    } else {
+      schoolClasses.remove(classString);
+    }
+  }
+
+  void onCheckAClass(List<bool> selectedClass, int checkboxIndex, bool? value,
+      BuildContext ctx) {
+    selectedClass[checkboxIndex] = value!;
+
+    ctx.read<ClassSelectorBloc>().add(SelectedClassEvent(checkboxIndex));
+  }
+
+  void makeClassSelected(Set<String> schoolClasses, int startIndex,
+      int subIndex, List<bool> selectedClass, int checkboxIndex) {
+    if (schoolClasses.contains(getClassAsString(startIndex, subIndex))) {
+      selectedClass[checkboxIndex] = true;
+    }
+  }
+
+  String getClassAsString(int startIndex, int subIndex) =>
+      "${Constants.classes[startIndex ~/ 6]}-${Constants.alphabets[subIndex]}";
 }
 
 class ClassSettings extends StatelessWidget {
   const ClassSettings({
     super.key,
-    required this.size,
     required this.classSelectType,
   });
 
-  final Size size;
   final int classSelectType;
 
   @override
   Widget build(BuildContext context) {
+    final Layout layout = Layout(context: context);
     return Container(
       width: double.maxFinite,
-      height: size.width > 700 ? 270 : 100,
+      height: layout.isLargeScreen ? 270 : 100,
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(10.0),

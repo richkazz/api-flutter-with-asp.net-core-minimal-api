@@ -30,6 +30,29 @@ class NavCloseState extends AdminSettingsState {}
 
 class NavOpenState extends AdminSettingsState {}
 
+class GetAllSchoolSubjectState extends AdminSettingsState {
+  final List<Subject> schoolSubjectsList;
+  const GetAllSchoolSubjectState(this.schoolSubjectsList);
+}
+
+class GetAdminSettingState extends AdminSettingsState {
+  final AdminSetting adminSetting;
+  const GetAdminSettingState(this.adminSetting);
+}
+
+class SuniorAndSeniorSchoolSubjectSet extends AdminSettingsState {
+  final Set<int> juniorSchoolSubjectSet;
+  final Set<int> seniorSchoolSubjectSet;
+  const SuniorAndSeniorSchoolSubjectSet(
+      {required this.juniorSchoolSubjectSet,
+      required this.seniorSchoolSubjectSet});
+}
+
+class SchoolClasseSetState extends AdminSettingsState {
+  final Set<String> schoolClasses;
+  const SchoolClasseSetState({required this.schoolClasses});
+}
+
 class SeniorSchoolState extends AdminSettingsState {}
 
 class JuniorSchoolState extends AdminSettingsState {}

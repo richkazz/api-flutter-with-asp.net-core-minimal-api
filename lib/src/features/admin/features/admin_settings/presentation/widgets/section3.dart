@@ -1,3 +1,4 @@
+import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/subject.dart';
 import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/presentation/bloc/admin_settings_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,135 +12,185 @@ class Section3 extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isSenior = false;
     bool isJunior = true;
-    List<bool> selectedSeniorSubject = List<bool>.filled(40, false);
-    List<bool> selectedJuniorSubject = List<bool>.filled(40, false);
-    BuildContext? SelectorBlocContext;
-    List<Widget> generateCheckBox(BuildContext ctx) {
-      List<Widget> item = [];
-      var size = MediaQuery.of(context).size;
-      for (var i = 0; i < Constants.subjects.length; i += 3) {
-        List<Widget> rowItem = [];
-        for (var j = i; (j < i + 3 && j < Constants.subjects.length); j++) {
-          rowItem.add(SizedBox(
-            width: size.width > 700 ? size.width * 0.2 : double.maxFinite,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                    child: Text(
-                  Constants.subjects[j],
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )),
-                const SizedBox(
-                  width: 10,
-                ),
-                Checkbox(
-                  shape: const CircleBorder(),
-                  value: isJunior
-                      ? selectedJuniorSubject[j]
-                      : selectedSeniorSubject[j],
-                  onChanged: (value) {
-                    if (isJunior) {
-                      selectedJuniorSubject[j] = value!;
-                    } else {
-                      selectedSeniorSubject[j] = value!;
-                    }
-                    ctx.read<SelectorBloc>().add(SelectedEvent(j));
-                  },
-                ),
-              ],
-            ),
-          ));
-        }
-        item.add(size.width > 700
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: rowItem,
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: rowItem,
-              ));
+    Set<int> juniorSchoolSubjectSet = {};
+    Set<int> seniorSchoolSubjectSet = {};
+    BuildContext? selectorBlocContext;
+    List<Subject> subjectList = [];
+
+    void onCheckJuniorSchool(bool? value, int subjectId) {
+      if (value == null) return;
+      if (value) {
+        juniorSchoolSubjectSet.add(subjectId);
+      } else {
+        juniorSchoolSubjectSet.remove(subjectId);
       }
-      return item;
+    }
+
+    void onCheckSeniorSchool(bool? value, int subjectId) {
+      if (value == null) return;
+      if (value) {
+        seniorSchoolSubjectSet.add(subjectId);
+      } else {
+        seniorSchoolSubjectSet.remove(subjectId);
+      }
+    }
+
+    var size = MediaQuery.of(context).size;
+    List<Widget> generateCheckBox(BuildContext ctx, List<Subject> subjects) {
+      return subjects
+          .map((subject) => SizedBox(
+                width: size.width > 700 ? size.width * 0.2 : double.maxFinite,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: Text(
+                      subject.subject,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Checkbox(
+                      shape: const CircleBorder(),
+                      value: isJunior
+                          ? juniorSchoolSubjectSet.contains(subject.id)
+                          : seniorSchoolSubjectSet.contains(subject.id),
+                      onChanged: (value) {
+                        if (isJunior) {
+                          onCheckJuniorSchool(value, subject.id);
+                        } else {
+                          onCheckSeniorSchool(value, subject.id);
+                        }
+                        ctx.read<SelectorBloc>().add(SelectedEvent(subject.id));
+                      },
+                    ),
+                  ],
+                ),
+              ))
+          .toList();
     }
 
     void onChangeToSecondarySchool() {
       context
           .read<AdminSettingsBloc>()
           .add(const ChangeJuniorSeniorEvent(true));
-      SelectorBlocContext!.read<SelectorBloc>().add(SelectedEvent(-2));
+      selectorBlocContext!.read<SelectorBloc>().add(SelectedEvent(-2));
     }
 
     void onChangeToJuniorSchool() {
       context
           .read<AdminSettingsBloc>()
           .add(const ChangeJuniorSeniorEvent(false));
-      SelectorBlocContext!.read<SelectorBloc>().add(SelectedEvent(-2));
+      selectorBlocContext!.read<SelectorBloc>().add(SelectedEvent(-2));
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text("SUBJECTS SELECTION"),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      BlocBuilder<AdminSettingsBloc, AdminSettingsState>(
-                        buildWhen: (previous, current) {
-                          return current is JuniorSchoolState ||
-                              current is SeniorSchoolState;
-                        },
-                        builder: (context, state) {
-                          if (state is JuniorSchoolState) {
-                            isJunior = true;
-                            isSenior = false;
-                          } else if (state is SeniorSchoolState) {
-                            isSenior = true;
-                            isJunior = false;
-                          }
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              schoolWithSection('JUNIOR SCHOOL', isJunior,
-                                  onChangeToJuniorSchool),
-                              schoolWithSection('SENIOR SCHOOL', isSenior,
-                                  onChangeToSecondarySchool),
-                            ],
-                          );
-                        },
-                      ),
-                      BlocProvider(
-                        create: (context) => SelectorBloc(),
-                        child: BlocBuilder<SelectorBloc, int>(
+    //Get the list of subjects
+    context.read<AdminSettingsBloc>().add(GetAllSchoolSubjectEvent());
+
+    return BlocListener<AdminSettingsBloc, AdminSettingsState>(
+      listener: (context, state) {
+        if (state is GetAllSchoolSubjectState) {
+          subjectList = state.schoolSubjectsList;
+          selectorBlocContext!.read<SelectorBloc>().add(SelectedEvent(-3));
+        }
+        if (state is SuniorAndSeniorSchoolSubjectSet) {
+          seniorSchoolSubjectSet = state.seniorSchoolSubjectSet;
+          juniorSchoolSubjectSet = state.juniorSchoolSubjectSet;
+          selectorBlocContext!.read<SelectorBloc>().add(SelectedEvent(-3));
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("SUBJECTS SELECTION"),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        BlocBuilder<AdminSettingsBloc, AdminSettingsState>(
+                          buildWhen: (previous, current) {
+                            return current is JuniorSchoolState ||
+                                current is SeniorSchoolState;
+                          },
                           builder: (context, state) {
-                            SelectorBlocContext = context;
-                            return Column(
-                              children: generateCheckBox(context),
+                            if (state is JuniorSchoolState) {
+                              isJunior = true;
+                              isSenior = false;
+                            } else if (state is SeniorSchoolState) {
+                              isSenior = true;
+                              isJunior = false;
+                            }
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                schoolWithSection('JUNIOR SCHOOL', isJunior,
+                                    onChangeToJuniorSchool),
+                                schoolWithSection('SENIOR SCHOOL', isSenior,
+                                    onChangeToSecondarySchool),
+                              ],
                             );
                           },
                         ),
-                      )
-                    ],
+                        BlocProvider(
+                          create: (context) => SelectorBloc(),
+                          child: BlocBuilder<SelectorBloc, int>(
+                            builder: (context, state) {
+                              selectorBlocContext = context;
+                              return SizedBox(
+                                height: 150,
+                                width: double.maxFinite,
+                                child: ListView.builder(
+                                  itemCount: (subjectList.length / 3).ceil(),
+                                  itemBuilder: (context, index) {
+                                    int startIndex = index * 3;
+                                    int endIndex = startIndex + 3;
+                                    List<Subject> subjects =
+                                        subjectList.sublist(
+                                            startIndex,
+                                            endIndex
+                                                .clamp(0, subjectList.length)
+                                                .toInt());
+
+                                    return size.width > 700
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: generateCheckBox(
+                                                context, subjects),
+                                          )
+                                        : Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: generateCheckBox(
+                                                context, subjects),
+                                          );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

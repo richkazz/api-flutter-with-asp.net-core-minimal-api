@@ -3,6 +3,7 @@ import 'package:api_tempate_flutter/core/error/error.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import '../../domain/entities/login.dart';
 import '../../domain/usecases/post_login.dart';
@@ -40,8 +41,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
     } on DioError catch (e) {
       var error = e.response!.data as Map<String, dynamic>;
-      var message = LoginError.fromJson(error);
-      emit(Error(message: message.error));
+      var message = ErrorResponse.fromJson(error);
+      emit(Error(message: message.errors.join(',')));
+      if (kDebugMode) {
+        print(e.response!.data);
+      }
     } on Exception catch (e) {
       emit(Error(message: "Something went wrong"));
     }

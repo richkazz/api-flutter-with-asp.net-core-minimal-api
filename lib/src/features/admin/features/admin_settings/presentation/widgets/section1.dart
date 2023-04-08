@@ -17,6 +17,7 @@ class Section1 extends StatelessWidget {
     }
 
     context.read<AdminSettingsBloc>().add(GetActiveTermEvent());
+    context.read<AdminSettingsBloc>().add(GetAdminSettingsEvent());
     void onTermSelected(val) {
       selectedItem = val;
       context
@@ -113,9 +114,14 @@ class Section1 extends StatelessWidget {
                 BlocBuilder<AdminSettingsBloc, AdminSettingsState>(
                   buildWhen: (previous, current) {
                     return current is ExamScoreTypeState ||
-                        current is ExamScoreTypeStateSecond;
+                        current is ExamScoreTypeStateSecond ||
+                        current is GetAdminSettingState;
                   },
                   builder: (context, state) {
+                    if (state is GetAdminSettingState) {
+                      examTypeRadioGroupValue = state
+                          .adminSetting.currentGradingSystems!.gradingSystem;
+                    }
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
