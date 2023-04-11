@@ -1,3 +1,4 @@
+import 'package:api_tempate_flutter/core/configs/styles/app_themes.dart';
 import 'package:api_tempate_flutter/src/features/login/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,8 +63,9 @@ class MyApp extends StatelessWidget {
           // Define a light and dark color theme. Then, read the user's
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
+
+          theme: AppThemes.lightTheme,
+          darkTheme: AppThemes.darkTheme,
           themeMode: settingsController.themeMode,
 
           // Define a function to handle named routes in order to support

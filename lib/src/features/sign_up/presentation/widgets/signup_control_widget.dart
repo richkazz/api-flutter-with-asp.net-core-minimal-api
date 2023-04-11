@@ -33,6 +33,7 @@ class _SignUpControlState extends State<SignUpControl> {
               keyboard: TextInputType.text,
               hintText: 'Name',
               labelText: 'Name',
+              context: context,
               controller: nameController),
           const SizedBox(height: 15),
           textField(
@@ -40,6 +41,7 @@ class _SignUpControlState extends State<SignUpControl> {
               keyboard: TextInputType.emailAddress,
               hintText: 'Email',
               labelText: 'Email',
+              context: context,
               controller: emailController),
           const SizedBox(height: 15),
           textField(
@@ -48,6 +50,7 @@ class _SignUpControlState extends State<SignUpControl> {
               hintText: 'Password',
               labelText: 'Password',
               obscureText: true,
+              context: context,
               controller: passwordController),
           const SizedBox(height: 15),
           textField(
@@ -59,6 +62,7 @@ class _SignUpControlState extends State<SignUpControl> {
               hintText: 'Confirm Password',
               labelText: 'Confirm Password',
               obscureText: true,
+              context: context,
               controller: confirmPasswordController),
           const SizedBox(height: 40),
           Row(

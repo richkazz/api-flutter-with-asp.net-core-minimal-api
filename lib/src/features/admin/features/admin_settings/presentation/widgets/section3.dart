@@ -1,4 +1,4 @@
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/subject.dart';
+import 'package:api_tempate_flutter/src/models/subject.dart';
 import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/presentation/bloc/admin_settings_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

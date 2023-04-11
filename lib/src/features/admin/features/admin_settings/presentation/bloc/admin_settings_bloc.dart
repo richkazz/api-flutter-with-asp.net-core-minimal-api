@@ -1,13 +1,13 @@
 import 'dart:async';
+import 'package:api_tempate_flutter/core/configs/configs.dart';
 import 'package:api_tempate_flutter/core/error/error.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/subject.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/domain/usecases/admin_settings_get_all_subjects.dart';
+import 'package:api_tempate_flutter/src/features/admin/domain/entities/active_school_term_entity.dart';
+import 'package:api_tempate_flutter/src/features/admin/domain/usecases/admin_usecases.dart';
+import 'package:api_tempate_flutter/src/models/models.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-
-import '../../admin_settings.dart';
 
 part 'admin_settings_event.dart';
 part 'admin_settings_state.dart';
@@ -33,9 +33,7 @@ class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
         _getAdminSetting = getAdminSetting,
         _updateAdminSetting = updateAdminSetting,
         super(AdminSettingsInitial()) {
-    on<AdminSettingsEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<AdminSettingsEvent>((event, emit) {});
     on<NavCloseEvent>(
       (event, emit) {
         emit(AdminSettingsInitial());
@@ -93,9 +91,10 @@ class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
     } on DioError catch (e) {
       var error = e.response!.data as Map<String, dynamic>;
       var message = ErrorResponse.fromJson(error);
-      if (kDebugMode) {
-        print(message);
-      }
+      Configs.errorLogger(message.errors.join(','),
+          className: "AdminSettingsBloc",
+          methodName: "_handelGetActiveTermEvent",
+          exceptionName: "DioError");
     }
   }
 
@@ -129,11 +128,10 @@ class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
     } on DioError catch (e) {
       var error = e.response!.data as Map<String, dynamic>;
       var message = ErrorResponse.fromJson(error);
-      if (kDebugMode) {
-        print(message);
-      }
-    } on Exception catch (e) {
-      print(e);
+      Configs.errorLogger(message.errors.join(','),
+          className: "AdminSettingsBloc",
+          methodName: "_handelGetAdminSettingsEvent",
+          exceptionName: "DioError");
     }
   }
 
@@ -174,9 +172,10 @@ class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
     } on DioError catch (e) {
       var error = e.response!.data as Map<String, dynamic>;
       var message = ErrorResponse.fromJson(error);
-      if (kDebugMode) {
-        print(message);
-      }
+      Configs.errorLogger(message.errors.join(','),
+          className: "AdminSettingsBloc",
+          methodName: "_handelPostAdminSettingsEvent",
+          exceptionName: "DioError");
     }
   }
 
@@ -188,13 +187,10 @@ class AdminSettingsBloc extends Bloc<AdminSettingsEvent, AdminSettingsState> {
     } on DioError catch (e) {
       var error = e.response!.data as Map<String, dynamic>;
       var message = ErrorResponse.fromJson(error);
-      if (kDebugMode) {
-        print(message.errors.join(","));
-      }
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+      Configs.errorLogger(message.errors.join(','),
+          className: "AdminSettingsBloc",
+          methodName: "_handelGetAllSchoolSubjectEvent",
+          exceptionName: "DioError");
     }
   }
 

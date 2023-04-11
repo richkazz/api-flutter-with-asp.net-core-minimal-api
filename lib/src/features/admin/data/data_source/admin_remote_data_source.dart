@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:api_tempate_flutter/core/Api/api.dart';
 import 'package:api_tempate_flutter/core/services/http/http_service.dart';
-import 'package:dio/dio.dart';
+import 'package:api_tempate_flutter/src/models/models.dart';
 
 import '../../../../../../../core/error/error.dart';
-import '../models/models.dart';
 
-abstract class AdminSettingsRemoteDataSource {
+abstract class AdminRemoteDataSource {
   /// TMDB Base endpoint path for people requests
   ///
   /// See:
@@ -27,13 +26,10 @@ abstract class AdminSettingsRemoteDataSource {
   Future updateAdminSetting(AdminSetting adminSetting);
 }
 
-class AdminSettingsDataSourceImpl implements AdminSettingsRemoteDataSource {
-  final Dio dioClient;
-
+class AdminDataSourceImpl implements AdminRemoteDataSource {
   /// Http service used to access an Http client and make calls
   final HttpService httpService;
-  AdminSettingsDataSourceImpl(
-      {required this.dioClient, required this.httpService});
+  AdminDataSourceImpl({required this.httpService});
   @override
   String get path => Api.activeSchoolTermEndPoint;
 
@@ -80,7 +76,8 @@ class AdminSettingsDataSourceImpl implements AdminSettingsRemoteDataSource {
   @override
   Future updateAdminSetting(AdminSetting adminSetting) async {
     var body = json.encode(adminSetting.toJson());
-    final response = await dioClient.put(Api.adminsettingsEndPoint, data: body);
+    final response =
+        await httpService.put(Api.adminsettingsEndPoint, data: body);
     if (response.statusCode == 204) {
       return;
     } else {

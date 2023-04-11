@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:api_tempate_flutter/core/configs/configs.dart';
+import 'package:api_tempate_flutter/core/error/response_error_model.dart';
 import 'package:api_tempate_flutter/core/models/cache_response.dart';
 import 'package:api_tempate_flutter/core/services/storage/storage_service.dart';
 import 'package:clock/clock.dart';
@@ -15,6 +16,13 @@ class CacheInterceptor implements Interceptor {
 
   /// Storage service used to store cache in local storage
   final StorageService storageService;
+
+  ///general error response
+  final ErrorResponse errorRexponse = ErrorResponse(
+      statusCode: 500,
+      statusPhrase: "Problem",
+      errors: ["Something went wrong"],
+      timeStamp: DateTime.now().toString());
 
   /// Helper method to create a storage key from
   /// request/response information
@@ -64,8 +72,20 @@ class CacheInterceptor implements Interceptor {
         );
         log('Query params: ${response.requestOptions.queryParameters}');
         log('-------------------------');
+        log('Body: ${response.requestOptions.data}');
+        log('-------------------------');
+
         return handler.resolve(response);
       }
+    }
+
+    if (err.response == null) {
+      var error = DioError(
+          requestOptions: err.requestOptions,
+          response: Response(
+              requestOptions: err.requestOptions,
+              data: errorRexponse.toJson()));
+      return handler.next(error);
     }
     return handler.next(err);
   }

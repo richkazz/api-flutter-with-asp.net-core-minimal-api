@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 /// App level configuration variables
 class Configs {
   /// The max allowed age duration for the http cache
@@ -20,4 +22,17 @@ class Configs {
   static const String subjectEndPoint = "/subjects";
   static const String activeSchoolTermEndPoint = "/active-school-term";
   static const String adminsettingsEndPoint = "/adminsettings";
+
+  ///Log error message in style
+  static void errorLogger(String message,
+      {required String methodName,
+      required String className,
+      required String exceptionName}) {
+    log('----------------------------');
+    log('❌ ❌ ❌ class: $className');
+    log('❌ ❌ ❌ method: $methodName');
+    log('❌ ❌ ❌ exception: $exceptionName');
+    log('❌ ❌ ❌ message: $message');
+    log('----------------------------');
+  }
 }

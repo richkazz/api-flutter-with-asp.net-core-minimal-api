@@ -8,3 +8,7 @@ abstract class AdminState extends Equatable {
 }
 
 class AdminInitial extends AdminState {}
+
+class AccountPageState extends AdminState {}
+
+class SettingsPageState extends AdminState {}

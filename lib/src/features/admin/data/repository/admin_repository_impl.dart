@@ -1,13 +1,11 @@
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/data_source/admin_settings_remote_data_source.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/active_school_term.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/admin_setting.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/subject.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/domain/repositories/admin_settings_repositories.dart';
+import 'package:api_tempate_flutter/src/features/admin/data/data_source/admin_remote_data_source.dart';
+import 'package:api_tempate_flutter/src/features/admin/domain/repositories/admin_repositories.dart';
+import 'package:api_tempate_flutter/src/models/models.dart';
 
-class AdminSettingsRepositoryImpl implements AdminSettingsRepositories {
-  final AdminSettingsRemoteDataSource remoteDataSource;
+class AdminRepositoryImpl implements AdminRepositories {
+  final AdminRemoteDataSource remoteDataSource;
 
-  AdminSettingsRepositoryImpl({
+  AdminRepositoryImpl({
     required this.remoteDataSource,
   });
   @override

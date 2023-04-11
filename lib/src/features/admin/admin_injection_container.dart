@@ -1,11 +1,11 @@
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/domain/usecases/admin_setting_get_admin_setting.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/domain/usecases/admin_setting_update_admin_setting.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/domain/usecases/admin_settings_create_admin_settings.dart';
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/domain/usecases/admin_settings_get_all_subjects.dart';
+import 'package:api_tempate_flutter/src/features/admin/data/data_source/admin_remote_data_source.dart';
+import 'package:api_tempate_flutter/src/features/admin/data/repository/admin_repository_impl.dart';
+import 'package:api_tempate_flutter/src/features/admin/domain/repositories/admin_repositories.dart';
+import 'package:api_tempate_flutter/src/features/admin/domain/usecases/admin_usecases.dart';
+import 'package:api_tempate_flutter/src/features/admin/features/account/presentation/bloc/bloc/account_bloc.dart';
 import 'package:api_tempate_flutter/src/features/admin/presentation/bloc/bloc/admin_bloc.dart';
 import 'package:get_it/get_it.dart';
 
-import 'features/admin_settings/admin_settings.dart';
 import 'features/admin_settings/presentation/bloc/admin_settings_bloc.dart';
 
 final sl = GetIt.instance;
@@ -16,6 +16,10 @@ void init() {
   sl.registerFactory(
     () => AdminBloc(),
   );
+  sl.registerFactory(
+    () => AccountBloc(getAllSchoolSubject: sl()),
+  );
+
   sl.registerFactory(
     () => AdminSettingsBloc(
         getActibeTerm: sl(),
@@ -35,13 +39,13 @@ void init() {
   sl.registerLazySingleton(() => CreateAdminSetting(sl()));
 
 // Repository
-  sl.registerLazySingleton<AdminSettingsRepositories>(
-    () => AdminSettingsRepositoryImpl(remoteDataSource: sl()),
+  sl.registerLazySingleton<AdminRepositories>(
+    () => AdminRepositoryImpl(remoteDataSource: sl()),
   );
   //! External
 
   // Data sources
-  sl.registerLazySingleton<AdminSettingsRemoteDataSource>(
-    () => AdminSettingsDataSourceImpl(dioClient: sl(), httpService: sl()),
+  sl.registerLazySingleton<AdminRemoteDataSource>(
+    () => AdminDataSourceImpl(httpService: sl()),
   );
 }

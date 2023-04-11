@@ -1,4 +1,4 @@
-import 'package:api_tempate_flutter/src/features/admin/features/admin_settings/data/models/subject.dart';
+import 'package:api_tempate_flutter/src/models/subject.dart';
 
 class SeniorSchoolSubject {
   int? id;

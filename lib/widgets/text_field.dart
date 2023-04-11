@@ -7,6 +7,7 @@ TextFormField textField(
     required Function validator,
     bool obscureText = false,
     required TextEditingController controller,
+    required BuildContext context,
     FocusNode? focusNode}) {
   return TextFormField(
       validator: (val) => validator(val),
@@ -17,7 +18,8 @@ TextFormField textField(
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         hintText: hintText,
+        hintStyle: Theme.of(context).textTheme.bodySmall,
         labelText: labelText,
-        labelStyle: const TextStyle(fontSize: 16),
+        labelStyle: Theme.of(context).textTheme.bodySmall,
       ));
 }
